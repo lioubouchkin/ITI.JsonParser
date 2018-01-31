@@ -133,7 +133,55 @@ namespace ITI.JsonParser.Tests
             Assert.AreEqual( json.Count, 5 );
         }
 
-        [TestCase( @"{""active"":true,""age"":20,""salutation"":""hello"",""sentence"":""William Shakespeare : \""To be, or not to be\"""",""weekend"":[""saturday"",""sunday""],""self"":{""active"":true,""age"":20,""salutation"":""hello"",""sentence"":""William Shakespeare: \""To be, or not to be\"""",""weekend"":[""saturday"",""sunday""]},""complex"":[{""active"":true,""age"":20,""salutation"":""hello"",""sentence"":""William Shakespeare: \""To be, or not to be\"""",""weekend"":[""saturday"",""sunday""]},{""active"":true,""age"":20,""salutation"":""hello"",""sentence"":""William Shakespeare: \""To be, or not to be\"""",""weekend"":[""saturday"",""sunday""],""self"":{""active"":true,""age"":20,""salutation"":""hello"",""sentence"":""William Shakespeare: \""To be, or not to be\"""",""weekend"":[""saturday"",""sunday""]}}]}" )]
+        //[TestCase( @"{""active"":true,""age"":20,""salutation"":""hello"",""sentence"":""William Shakespeare : \""To be, or not to be\"""",""weekend"":[""saturday"",""sunday""],""self"":{""active"":true,""age"":20,""salutation"":""hello"",""sentence"":""William Shakespeare: \""To be, or not to be\"""",""weekend"":[""saturday"",""sunday""]},""complex"":[{""active"":true,""age"":20,""salutation"":""hello"",""sentence"":""William Shakespeare: \""To be, or not to be\"""",""weekend"":[""saturday"",""sunday""]},{""active"":true,""age"":20,""salutation"":""hello"",""sentence"":""William Shakespeare: \""To be, or not to be\"""",""weekend"":[""saturday"",""sunday""],""self"":{""active"":true,""age"":20,""salutation"":""hello"",""sentence"":""William Shakespeare: \""To be, or not to be\"""",""weekend"":[""saturday"",""sunday""]}}]}" )]
+        [TestCase( @"{  ""active"" : true,
+                        ""age"" : 20,
+                        ""salutation"" : ""hello"",
+                        ""sentence""  :  ""William Shakespeare : \""To be, or not to be\"""",
+                        ""weekend"" : [""saturday"",""sunday""],
+                        ""self"" : 
+                            {   ""active"":true,
+                                ""age"":20,
+                                ""salutation"":""hello"",
+                                ""sentence"":""William Shakespeare: \""To be, or not to be\"""",
+                                ""weekend"":[""saturday"",""sunday""]
+                            }
+                            ,""complex"":
+                                [
+                                    {
+                                        ""active"":true,
+                                        ""age"":20,
+                                        ""salutation"":""hello"",
+                                        ""sentence"":""William Shakespeare: \""To be, or not to be\"""",
+                                        ""weekend"":
+                                            [
+                                                ""saturday"",""sunday""
+                                            ]
+                                    }
+                                    ,{
+                                        ""active"":true,
+                                        ""age"":20,
+                                        ""salutation"":""hello"",
+                                        ""sentence"":""William Shakespeare: \""To be, or not to be\"""",
+                                        ""weekend"":
+                                            [
+                                                ""saturday"",""sunday""
+                                            ],
+                                        ""self"":
+                                            {
+                                                ""active"":true,
+                                                ""age"":20,
+                                                ""salutation"":""hello"",
+                                                ""sentence"":""William Shakespeare: \""To be, or not to be\"""",
+                                                ""weekend"":
+                                                    [
+                                                        ""saturday"",
+                                                        ""sunday""
+                                                    ]
+                                            }
+                                        }
+                                    ]
+                                }" )]
         public void test104_parse_object_complex( string jsonValue ) {
             Parser parser = new Parser( jsonValue );
             Dictionary<String, Object> json = parser.parse();

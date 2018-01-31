@@ -22,7 +22,8 @@ namespace ITI.JsonParser.Correction
         Stack<Char> _delimitors = new Stack<Char>();
 
         public Parser( String json ) {
-            _json = json.Trim();
+            //_json = json.Trim();
+            _json = Regex.Replace( json, "(\"(?:[^\"\\\\]|\\\\.)*\")|\\s+", "$1" );
             _position = 0;
             _result = new Dictionary<String, Object>();
         }
@@ -31,7 +32,7 @@ namespace ITI.JsonParser.Correction
             int endOfDoublePosition =
                 findEndOfValuePosition( _json.Substring( _position ) );
             if( endOfDoublePosition == -1 ) {
-                throw new FormatException( "Format Error: one of ,]} is unexpected" );
+                throw new FormatException( "Format Error: one of ,]} is expected" );
             }
             String stringValue = _json.Substring( _position, endOfDoublePosition );
             stringValue = stringValue.Replace('.',',');
@@ -39,14 +40,14 @@ namespace ITI.JsonParser.Correction
             if( double.TryParse( stringValue, out double doubleValue ) ) {
                 return doubleValue;
             }
-            throw new FormatException( "Format Error: double value is unexpected" );
+            throw new FormatException( "Format Error: double value is expected" );
         }
 
         String ParseString() {
             int closingDoubleQuotesPosition =
                 findClosingDoubleQuotesPosition( _json.Substring( _position+1 ) );
             if( closingDoubleQuotesPosition == -1) {
-                throw new FormatException( "Format Error: \" is unexpected" );
+                throw new FormatException( "Format Error: \" is expected" );
             }
             String stringValue = _json.Substring( _position+1, closingDoubleQuotesPosition);
             _position += closingDoubleQuotesPosition + 1;
@@ -57,7 +58,7 @@ namespace ITI.JsonParser.Correction
             int endOfBooleanPosition =
                findEndOfValuePosition( _json.Substring( _position ) );
             if( endOfBooleanPosition == -1 ) {
-                throw new FormatException( "Format Error: one of ,]} is unexpected" );
+                throw new FormatException( "Format Error: one of ,]} is expected" );
             }
             String stringValue = _json.Substring( _position, endOfBooleanPosition );
             _position += endOfBooleanPosition - 1;
@@ -74,7 +75,7 @@ namespace ITI.JsonParser.Correction
             int endOfNullPosition =
                findEndOfValuePosition( _json.Substring( _position ) );
             if( endOfNullPosition == -1 ) {
-                throw new FormatException( "Format Error: one of ,]} is unexpected" );
+                throw new FormatException( "Format Error: one of ,]} is expected" );
             }
             String stringValue = _json.Substring( _position, endOfNullPosition );
             _position += endOfNullPosition - 1;
@@ -141,7 +142,6 @@ namespace ITI.JsonParser.Correction
             return -1;
         }
 
-        // TODO
         object parseValue() {
             if(_json[_position].Equals('"')) {
                 return ParseString();
@@ -190,7 +190,7 @@ namespace ITI.JsonParser.Correction
                         throw new FormatException( "Format Error, : is expected" );
                     }
                     ++_position;
-                    value = parseValue();       // TODO
+                    value = parseValue();
                     if( anObject.ContainsKey( key ) ) {
                         throw new DuplicateKeyException( "key already exists" );
                     }
