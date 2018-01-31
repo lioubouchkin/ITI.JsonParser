@@ -85,7 +85,6 @@ namespace ITI.JsonParser.Correction
             throw new FormatException( "Format Error: invalid json value" );
         }
 
-        // TODO
         List<Object> ParseArray() {
             object value = null;
             List<Object> anArray = new List<Object>();
@@ -96,7 +95,7 @@ namespace ITI.JsonParser.Correction
                 }
                 // add '[' to stack
                 _delimitors.Push( _json[_position++] );
-                var endOfArray = false;     // TODO treat end of array if blank space
+                var endOfArray = false;
                 while( !endOfArray ) {
 
                     value = parseValue();
@@ -150,7 +149,7 @@ namespace ITI.JsonParser.Correction
                 return ParseArray();
             }
             if( _json[_position].Equals('{') ) {
-                return parseObject();
+                return ParseObject();
             }
             if( int.TryParse( new String(_json[_position], 1), out int a ) ) {
                 return ParseDouble();
@@ -168,7 +167,7 @@ namespace ITI.JsonParser.Correction
          * JSon Object always begins with '{' and ends with '}'
          * 
          */
-        Dictionary<String, Object> parseObject() {
+        Dictionary<String, Object> ParseObject() {
             string key = null;
             object value = null;
             Dictionary<String, Object> anObject = new Dictionary<string, object>();
@@ -223,7 +222,7 @@ namespace ITI.JsonParser.Correction
                 }
                 return _result;
             }
-             _result = parseObject();
+             _result = ParseObject();
 
             if(_delimitors.Count > 0) {
                 throw new FormatException( "Format Error" );
