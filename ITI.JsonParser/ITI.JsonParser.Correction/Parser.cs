@@ -53,7 +53,7 @@ namespace ITI.JsonParser.Correction
             return stringValue;
         }
         
-        bool ParseBoolean() {
+        Boolean ParseBoolean() {
             int endOfBooleanPosition =
                findEndOfValuePosition( _json.Substring( _position ) );
             if( endOfBooleanPosition == -1 ) {
@@ -83,10 +83,37 @@ namespace ITI.JsonParser.Correction
             }
             throw new FormatException( "Format Error: invalid json value" );
         }
+
         // TODO
-        Object[] ParseArray() {
-            return null;
-            //throw new NotImplementedException();
+        List<Object> ParseArray() {
+            object value = null;
+            List<Object> anArray = new List<Object>();
+            try {
+                if( _json[_position + 1].Equals( ']' ) ) {
+                    _position++;
+                    return anArray;
+                }
+                // add '[' to stack
+                _delimitors.Push( _json[_position++] );
+                var endOfArray = false;     // TODO treat end of array if blank space
+                while( !endOfArray ) {
+
+                    value = parseValue();
+                    anArray.Add( value );
+                    // end of the array
+                    if( !_json[++_position].Equals( ',' ) ) {
+                        if( _delimitors.Pop().Equals( '[' ) && !_json[_position].Equals( ']' ) ) {
+                            throw new FormatException( "Format Error, ] is expected" );
+                        }
+                        endOfArray = true;
+                    } else {
+                        ++_position;
+                    }
+                }
+            } catch( IndexOutOfRangeException e ) {
+                throw new FormatException( "Format Error: unexpected end of json" );
+            }
+            return anArray;
         }
 
         /**
@@ -144,12 +171,16 @@ namespace ITI.JsonParser.Correction
         Dictionary<String, Object> parseObject() {
             string key = null;
             object value = null;
-            // add '{' to stack
-            _delimitors.Push( _json[_position++] );
             Dictionary<String, Object> anObject = new Dictionary<string, object>();
-            var endOfObject = false;
-            while( !endOfObject ) {
-                try {
+            try {
+                if( _json[_position + 1].Equals( '}' ) ) {
+                    _position++;
+                    return anObject;
+                }
+                // add '{' to stack
+                _delimitors.Push( _json[_position++] );
+                var endOfObject = false;
+                while( !endOfObject ) {
                     if( !_json[_position].Equals( '"' ) ) {
                         throw new FormatException( "Format Error, \" is expected" );
                     }
@@ -174,9 +205,9 @@ namespace ITI.JsonParser.Correction
                     } else {
                         ++_position;
                     }
-                } catch ( IndexOutOfRangeException e) {
-                    throw new FormatException( "Format Error: unexpected end of json string" );
                 }
+            } catch( IndexOutOfRangeException e ) {
+                throw new FormatException( "Format Error: unexpected end of json string" );
             }
             return anObject;
         }
@@ -184,11 +215,11 @@ namespace ITI.JsonParser.Correction
 
         public Dictionary<String, Object> parse() {
             if ( !_json[_position].Equals('{') ) {
-                throw new FormatException( @"Format Error, '{' is expected" );
+                throw new FormatException( @"Format Error, { is expected" );
             }
             if ( _json.Substring( 1, _json.Length - 2 ).Trim().Length == 0 ) {
                 if( !_json[++_position].Equals('}') ) {
-                    throw new FormatException( @"Format Error, '}' is expected" );
+                    throw new FormatException( @"Format Error, } is expected" );
                 }
                 return _result;
             }
