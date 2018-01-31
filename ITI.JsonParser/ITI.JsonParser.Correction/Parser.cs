@@ -29,7 +29,7 @@ namespace ITI.JsonParser.Correction
         
         Double ParseDouble() {
             int endOfDoublePosition =
-                findEndOfDoublePosition( _json.Substring( _position ) );
+                findEndOfValuePosition( _json.Substring( _position ) );
             if( endOfDoublePosition == -1 ) {
                 throw new FormatException( "Format Error: one of ,]} is unexpected" );
             }
@@ -52,13 +52,36 @@ namespace ITI.JsonParser.Correction
             _position += closingDoubleQuotesPosition + 1;
             return stringValue;
         }
-        // TODO
+        
         bool ParseBoolean() {
-            throw new NotImplementedException();
+            int endOfBooleanPosition =
+               findEndOfValuePosition( _json.Substring( _position ) );
+            if( endOfBooleanPosition == -1 ) {
+                throw new FormatException( "Format Error: one of ,]} is unexpected" );
+            }
+            String stringValue = _json.Substring( _position, endOfBooleanPosition );
+            _position += endOfBooleanPosition - 1;
+            if( stringValue.Equals( "true" ) ) {
+                return true;
+            }
+            if( stringValue.Equals( "false" ) ) {
+                return false;
+            }
+            throw new FormatException( "Format Error: invalid json value" );
         }
-        // TODO
+        
         Object ParseNull() {
-            return null;
+            int endOfNullPosition =
+               findEndOfValuePosition( _json.Substring( _position ) );
+            if( endOfNullPosition == -1 ) {
+                throw new FormatException( "Format Error: one of ,]} is unexpected" );
+            }
+            String stringValue = _json.Substring( _position, endOfNullPosition );
+            _position += endOfNullPosition - 1;
+            if( stringValue.Equals("null")) {
+                return null;
+            }
+            throw new FormatException( "Format Error: invalid json value" );
         }
         // TODO
         Object[] ParseArray() {
@@ -80,7 +103,7 @@ namespace ITI.JsonParser.Correction
         /**
          * finds the position of the first not escaped double commas 
          * */
-        public int findEndOfDoublePosition( String chain ) {
+        public int findEndOfValuePosition( String chain ) {
             char ch;
             for( int i=0; i<chain.Length; i++ ) {
                 ch = chain[i];
@@ -96,7 +119,6 @@ namespace ITI.JsonParser.Correction
             if(_json[_position].Equals('"')) {
                 return ParseString();
             }
-            // TODO
             if( _json[_position].Equals('[')) {
                 return ParseArray();
             }
@@ -112,8 +134,7 @@ namespace ITI.JsonParser.Correction
             if( _json[_position].Equals('f') || _json[_position].Equals( 't' ) ) {
                 return ParseBoolean();
             }
-            return "aValue";
-//            throw new NotImplementedException();
+            throw new FormatException( "Format Error: invalid json value" );
         }
 
         /**
@@ -150,8 +171,9 @@ namespace ITI.JsonParser.Correction
                             throw new FormatException( "Format Error, } is expected" );
                         }
                         endOfObject = true;
+                    } else {
+                        ++_position;
                     }
-                    ++_position;
                 } catch ( IndexOutOfRangeException e) {
                     throw new FormatException( "Format Error: unexpected end of json string" );
                 }

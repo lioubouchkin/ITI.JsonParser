@@ -62,5 +62,26 @@ namespace ITI.JsonParser.Tests
             Dictionary<String, Object> json = parser.parse();
             Assert.AreEqual( json.Count, 3 );
         }
+
+        [TestCase( @"{""var1"":25.5,""var2"":""value2"",""var3"":null}" )]
+        public void test60_null_value( String jsonValue ) {
+            Parser parser = new Parser( jsonValue );
+            Dictionary<String, Object> json = parser.parse();
+            Assert.AreEqual( json.Count, 3 );
+        }
+
+        [TestCase( @"{""var1"":25.5,""var2"":{""var1"":25},""var3"":null}" )]
+        public void test70_object_value( String jsonValue ) {
+            Parser parser = new Parser( jsonValue );
+            Dictionary<String, Object> json = parser.parse();
+            Assert.AreEqual( json.Count, 3 );
+        }
+
+        [TestCase( @"{""var1"":25.5,""var2"":{""var1"":25,""var2"":true},""var3"":null,""var4"":false}" )]
+        public void test80_boolean_value( String jsonValue ) {
+            Parser parser = new Parser( jsonValue );
+            Dictionary<String, Object> json = parser.parse();
+            Assert.AreEqual( json.Count, 4 );
+        }
     }
 }
