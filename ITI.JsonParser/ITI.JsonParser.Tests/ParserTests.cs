@@ -18,15 +18,22 @@ namespace ITI.JsonParser.Tests
         }
 
         [TestCase( @"{""var"":""value""}" )]
-        //[TestCase( @"{""var"":""""}" )]
         public void test20_one_key_value( String jsonValue ) {
             Parser parser = new Parser( jsonValue );
             Dictionary<String, Object> json = parser.parse();
             Assert.AreEqual( json.Count, 1 );
         }
 
+        [TestCase( @"{""var"":""value""" )]
+        public void test21_unclosed_object_error( String jsonValue ) {
+            Parser parser = new Parser( jsonValue );
+            //Dictionary<String, Object> json = parser.parse();
+            Assert.Throws<FormatException>( delegate {
+                parser.parse();
+            } );
+        }
+
         [TestCase( @"{""var1"":""value1"",""var2"":""value2"",""var3"":""value3""}" )]
-        //[TestCase( @"{""var1"":"""",""var2"":"""",""var3"":""""}" )]
         public void test30_several_key_value( String jsonValue ) {
             Parser parser = new Parser( jsonValue );
             Dictionary<String, Object> json = parser.parse();
@@ -34,7 +41,6 @@ namespace ITI.JsonParser.Tests
         }
 
         [TestCase( @"{""var1"":""value1"",""var2"":""value2"",""var1"":""value3""}" )]
-        //[TestCase( @"{""var1"":"""",""var2"":"""",""var1"":""""}" )]
         public void test40_duplicate_key_error( String jsonValue ) {
             Parser parser = new Parser( jsonValue );
             //Dictionary<String, Object> json = parser.parse();
@@ -43,5 +49,18 @@ namespace ITI.JsonParser.Tests
             } );
         }
 
+        [TestCase( @"{""var1"":25}" )]
+        public void test50_double_value( String jsonValue ) {
+            Parser parser = new Parser( jsonValue );
+            Dictionary<String, Object> json = parser.parse();
+            Assert.AreEqual( json.Count, 1 );
+        }
+
+        [TestCase( @"{""var1"":25.5,""var2"":""value2"",""var3"":""12.88""}" )]
+        public void test51_double_string_values( String jsonValue ) {
+            Parser parser = new Parser( jsonValue );
+            Dictionary<String, Object> json = parser.parse();
+            Assert.AreEqual( json.Count, 3 );
+        }
     }
 }

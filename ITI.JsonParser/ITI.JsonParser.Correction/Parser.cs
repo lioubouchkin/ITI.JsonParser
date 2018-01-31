@@ -26,24 +26,42 @@ namespace ITI.JsonParser.Correction
             _position = 0;
             _result = new Dictionary<String, Object>();
         }
-
-        double ParseDouble( String value ) {
-            throw new NotImplementedException();
+        
+        Double ParseDouble() {
+            int endOfDoublePosition =
+                findEndOfDoublePosition( _json.Substring( _position ) );
+            if( endOfDoublePosition == -1 ) {
+                throw new FormatException( "Format Error: one of ,]} is unexpected" );
+            }
+            String stringValue = _json.Substring( _position, endOfDoublePosition );
+            stringValue = stringValue.Replace('.',',');
+            _position += endOfDoublePosition-1;
+            if( double.TryParse( stringValue, out double doubleValue ) ) {
+                return doubleValue;
+            }
+            throw new FormatException( "Format Error: double value is unexpected" );
         }
 
         String ParseString() {
             int closingDoubleQuotesPosition =
                 findClosingDoubleQuotesPosition( _json.Substring( _position+1 ) );
+            if( closingDoubleQuotesPosition == -1) {
+                throw new FormatException( "Format Error: \" is unexpected" );
+            }
             String stringValue = _json.Substring( _position+1, closingDoubleQuotesPosition);
-            _position += closingDoubleQuotesPosition+1;
+            _position += closingDoubleQuotesPosition + 1;
             return stringValue;
         }
-
-        bool ParseBoolean( String value ) {
+        // TODO
+        bool ParseBoolean() {
             throw new NotImplementedException();
         }
-
-        Object[] ParseArray( String value ) {
+        // TODO
+        Object ParseNull() {
+            return null;
+        }
+        // TODO
+        Object[] ParseArray() {
             return null;
             //throw new NotImplementedException();
         }
@@ -59,13 +77,40 @@ namespace ITI.JsonParser.Correction
             return -1;
         }
 
+        /**
+         * finds the position of the first not escaped double commas 
+         * */
+        public int findEndOfDoublePosition( String chain ) {
+            char ch;
+            for( int i=0; i<chain.Length; i++ ) {
+                ch = chain[i];
+                if( ch.Equals( ',' ) || ch.Equals( ']' ) || ch.Equals( '}' ) ) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+
         // TODO
         object parseValue() {
             if(_json[_position].Equals('"')) {
                 return ParseString();
             }
-            if( _json[_position].Equals('[') ) {
+            // TODO
+            if( _json[_position].Equals('[')) {
                 return ParseArray();
+            }
+            if( _json[_position].Equals('{') ) {
+                return parseObject();
+            }
+            if( int.TryParse( new String(_json[_position], 1), out int a ) ) {
+                return ParseDouble();
+            }
+            if( _json[_position].Equals('n') ) {
+                return ParseNull();
+            }
+            if( _json[_position].Equals('f') || _json[_position].Equals( 't' ) ) {
+                return ParseBoolean();
             }
             return "aValue";
 //            throw new NotImplementedException();
@@ -83,28 +128,33 @@ namespace ITI.JsonParser.Correction
             Dictionary<String, Object> anObject = new Dictionary<string, object>();
             var endOfObject = false;
             while( !endOfObject ) {
-                if( !_json[_position].Equals( '"' ) ) {
-                    throw new FormatException( "Format Error, \" is needed" );
-                }
-                key = ParseString();    // TODO
-                if( !_json[++_position].Equals( ':' ) ) {
-                    throw new FormatException( "Format Error, : is needed" );
-                }
-                ++_position;
-                value = parseValue();       // TODO
-                if( anObject.ContainsKey( key ) ) {
-                    throw new DuplicateKeyException( "key already exists" );
-                }
-                anObject.Add(key, value);
-
-                // end of the object
-                if( !_json[++_position].Equals(',') ) {
-                    if( _delimitors.Pop().Equals('{') && !_json[_position].Equals('}') ) {
-                        throw new FormatException( "Format Error, } is needed" );
+                try {
+                    if( !_json[_position].Equals( '"' ) ) {
+                        throw new FormatException( "Format Error, \" is expected" );
                     }
-                    endOfObject = true;
+                    key = ParseString();
+
+                    if( !_json[++_position].Equals( ':' ) ) {
+                        throw new FormatException( "Format Error, : is expected" );
+                    }
+                    ++_position;
+                    value = parseValue();       // TODO
+                    if( anObject.ContainsKey( key ) ) {
+                        throw new DuplicateKeyException( "key already exists" );
+                    }
+                    anObject.Add( key, value );
+
+                    // end of the object
+                    if( !_json[++_position].Equals( ',' ) ) {
+                        if( _delimitors.Pop().Equals( '{' ) && !_json[_position].Equals( '}' ) ) {
+                            throw new FormatException( "Format Error, } is expected" );
+                        }
+                        endOfObject = true;
+                    }
+                    ++_position;
+                } catch ( IndexOutOfRangeException e) {
+                    throw new FormatException( "Format Error: unexpected end of json string" );
                 }
-                ++_position;
             }
             return anObject;
         }
@@ -112,11 +162,11 @@ namespace ITI.JsonParser.Correction
 
         public Dictionary<String, Object> parse() {
             if ( !_json[_position].Equals('{') ) {
-                throw new FormatException( @"Format Error, '{' is needed" );
+                throw new FormatException( @"Format Error, '{' is expected" );
             }
             if ( _json.Substring( 1, _json.Length - 2 ).Trim().Length == 0 ) {
                 if( !_json[++_position].Equals('}') ) {
-                    throw new FormatException( @"Format Error, '}' is needed" );
+                    throw new FormatException( @"Format Error, '}' is expected" );
                 }
                 return _result;
             }
