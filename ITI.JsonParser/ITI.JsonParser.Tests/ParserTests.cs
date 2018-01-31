@@ -7,14 +7,13 @@ using NUnit.Framework;
 namespace ITI.JsonParser.Tests
 {
     [TestFixture]
-    public class ParserTests
-    {
-        [TestCase(@"{}")]
-        public void test10_empty_json(String jsonValue) {
+    public class ParserTests {
+        [TestCase( @"{}" )]
+        public void test10_empty_json( String jsonValue ) {
             Parser parser = new Parser( jsonValue );
             //Assert.That (parser.findClosingDoubleQuotesPosition( "\\\"sdsd\""), Is.EqualTo(6) );
             Dictionary<String, Object> json = parser.parse();
-            Assert.AreEqual( json.Count, 0);
+            Assert.AreEqual( json.Count, 0 );
         }
 
         [TestCase( @"{""var"":""value""}" )]
@@ -103,6 +102,42 @@ namespace ITI.JsonParser.Tests
             Parser parser = new Parser( jsonValue );
             Dictionary<String, Object> json = parser.parse();
             Assert.AreEqual( json.Count, 6 );
+        }
+
+        [TestCase( @"{""sentence"":""William Shakespeare : \""To be, or not to be\""""}" )]
+
+        public void test100_parse_string_escape( string jsonValue ) {
+            Parser parser = new Parser( jsonValue );
+            Dictionary<String, Object> json = parser.parse();
+            Assert.AreEqual( json.Count, 1 );
+        }
+
+        [TestCase( @"{""weekend"":[""saturday"",""sunday""]}" )]
+        public void test101_parse_array( string jsonValue ) {
+            Parser parser = new Parser( jsonValue );
+            Dictionary<String, Object> json = parser.parse();
+            Assert.AreEqual( json.Count, 1 );
+        }
+
+        [TestCase( @"{""active"":true,""age"":20,""salutation"":""hello"",""sentence"":""William Shakespeare : \""To be, or not to be\""""}" )]
+        public void test102_parse_object_simple( string jsonValue ) {
+            Parser parser = new Parser( jsonValue );
+            Dictionary<String, Object> json = parser.parse();
+            Assert.AreEqual( json.Count, 4 );
+        }
+
+        [TestCase( @"{""active"":true,""age"":20,""salutation"":""hello"",""sentence"":""William Shakespeare : \""To be, or not to be\"""",""weekend"":[""saturday"",""sunday""]}" )]
+        public void test103_parse_object_with_array( string jsonValue ) {
+            Parser parser = new Parser( jsonValue );
+            Dictionary<String, Object> json = parser.parse();
+            Assert.AreEqual( json.Count, 5 );
+        }
+
+        [TestCase( @"{""active"":true,""age"":20,""salutation"":""hello"",""sentence"":""William Shakespeare : \""To be, or not to be\"""",""weekend"":[""saturday"",""sunday""],""self"":{""active"":true,""age"":20,""salutation"":""hello"",""sentence"":""William Shakespeare: \""To be, or not to be\"""",""weekend"":[""saturday"",""sunday""]},""complex"":[{""active"":true,""age"":20,""salutation"":""hello"",""sentence"":""William Shakespeare: \""To be, or not to be\"""",""weekend"":[""saturday"",""sunday""]},{""active"":true,""age"":20,""salutation"":""hello"",""sentence"":""William Shakespeare: \""To be, or not to be\"""",""weekend"":[""saturday"",""sunday""],""self"":{""active"":true,""age"":20,""salutation"":""hello"",""sentence"":""William Shakespeare: \""To be, or not to be\"""",""weekend"":[""saturday"",""sunday""]}}]}" )]
+        public void test104_parse_object_complex( string jsonValue ) {
+            Parser parser = new Parser( jsonValue );
+            Dictionary<String, Object> json = parser.parse();
+            Assert.AreEqual( json.Count, 7 );
         }
     }
 }

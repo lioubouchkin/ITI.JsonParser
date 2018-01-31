@@ -128,7 +128,7 @@ namespace ITI.JsonParser.Correction
         }
 
         /**
-         * finds the position of the first not escaped double commas 
+         * finds the position of one of the possible value endings
          * */
         public int findEndOfValuePosition( String chain ) {
             char ch;
