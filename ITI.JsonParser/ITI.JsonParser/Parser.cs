@@ -23,6 +23,10 @@ namespace ITI.JsonParser {
             throw new NotImplementedException();
         }
 
+        public static object ParseNull( string value, int start, int count ) {
+            throw new NotImplementedException();
+        }
+
         public static Dictionary<String, Object> ParseObject( string value, int start, int count ) {
             throw new NotImplementedException();
         }
