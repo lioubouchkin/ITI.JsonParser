@@ -1,0 +1,5 @@
+﻿json:		object
+object:		{ (String : value)(,String : value)* } | {}
+String:		"(characters)*"
+value:		Array | bool | double | String | null | object
+Array:		[ value(,value)* ]
