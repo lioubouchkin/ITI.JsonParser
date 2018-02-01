@@ -14,21 +14,14 @@ namespace ITI.JsonParser.Correction
      * 
      */
     public class Parser {
-        Dictionary<String, Object> _result;
-        String _json;
+        private static Dictionary<String, Object> _result;
+        private static String _json;
         // current parsing element position
-        int _position;
+        private static int _position;
         // objects / vakues delimitors
-        Stack<Char> _delimitors = new Stack<Char>();
-
-        public Parser( String json ) {
-            //_json = json.Trim();
-            _json = Regex.Replace( json, "(\"(?:[^\"\\\\]|\\\\.)*\")|\\s+", "$1" );
-            _position = 0;
-            _result = new Dictionary<String, Object>();
-        }
+        private static Stack<Char> _delimitors;
         
-        Double ParseDouble() {
+        static private Double ParseDouble() {
             int endOfDoublePosition =
                 findEndOfValuePosition( _json.Substring( _position ) );
             if( endOfDoublePosition == -1 ) {
@@ -43,7 +36,7 @@ namespace ITI.JsonParser.Correction
             throw new FormatException( "Format Error: double value is expected" );
         }
 
-        String ParseString() {
+        static private String ParseString() {
             int closingDoubleQuotesPosition =
                 findClosingDoubleQuotesPosition( _json.Substring( _position+1 ) );
             if( closingDoubleQuotesPosition == -1) {
@@ -53,8 +46,8 @@ namespace ITI.JsonParser.Correction
             _position += closingDoubleQuotesPosition + 1;
             return stringValue;
         }
-        
-        Boolean ParseBoolean() {
+
+        static private Boolean ParseBoolean() {
             int endOfBooleanPosition =
                findEndOfValuePosition( _json.Substring( _position ) );
             if( endOfBooleanPosition == -1 ) {
@@ -70,8 +63,8 @@ namespace ITI.JsonParser.Correction
             }
             throw new FormatException( "Format Error: invalid json value" );
         }
-        
-        Object ParseNull() {
+
+        static private Object ParseNull() {
             int endOfNullPosition =
                findEndOfValuePosition( _json.Substring( _position ) );
             if( endOfNullPosition == -1 ) {
@@ -85,7 +78,7 @@ namespace ITI.JsonParser.Correction
             throw new FormatException( "Format Error: invalid json value" );
         }
 
-        List<Object> ParseArray() {
+        static private List<Object> ParseArray() {
             object value = null;
             List<Object> anArray = new List<Object>();
             try {
@@ -119,7 +112,7 @@ namespace ITI.JsonParser.Correction
         /**
          * finds the position of the first not escaped double commas 
          * */
-        public int findClosingDoubleQuotesPosition( String chain) {
+        static private int findClosingDoubleQuotesPosition( String chain) {
             var myRegex = new Regex( "(?<!\\\\)\"" );
             foreach( Match match in myRegex.Matches( chain ) ) {
                 return match.Index;
@@ -130,7 +123,7 @@ namespace ITI.JsonParser.Correction
         /**
          * finds the position of one of the possible value endings
          * */
-        public int findEndOfValuePosition( String chain ) {
+        static private int findEndOfValuePosition( String chain ) {
             char ch;
             for( int i=0; i<chain.Length; i++ ) {
                 ch = chain[i];
@@ -141,7 +134,7 @@ namespace ITI.JsonParser.Correction
             return -1;
         }
 
-        object parseValue() {
+        static private object parseValue() {
             if(_json[_position].Equals('"')) {
                 return ParseString();
             }
@@ -167,7 +160,7 @@ namespace ITI.JsonParser.Correction
          * JSon Object always begins with '{' and ends with '}'
          * 
          */
-        Dictionary<String, Object> ParseObject() {
+        static private Dictionary<String, Object> ParseObject() {
             string key = null;
             object value = null;
             Dictionary<String, Object> anObject = new Dictionary<string, object>();
@@ -212,7 +205,11 @@ namespace ITI.JsonParser.Correction
         }
 
 
-        public Dictionary<String, Object> parse() {
+        static public Dictionary<String, Object> parse(String json) {
+            _json = Regex.Replace( json, "(\"(?:[^\"\\\\]|\\\\.)*\")|\\s+", "$1" );
+            _position = 0;
+            _result = new Dictionary<String, Object>();
+            _delimitors = new Stack<Char>();
             if ( !_json[_position].Equals('{') ) {
                 throw new FormatException( @"Format Error, { is expected" );
             }
