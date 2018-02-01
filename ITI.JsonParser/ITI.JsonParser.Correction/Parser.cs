@@ -22,12 +22,17 @@ namespace ITI.JsonParser.Correction
             do
             {
                 _builder.Append(value[start]);
-                _next = start + 1 < value.Length ? value[start + 1] : '\0';
-            } while (Move(ref start, 1, count) && !_next.Equals(',') && !_next.Equals(']') && !_next.Equals('}'));
+                _next = start < value.Length - 1 ? value[start + 1] : '\0';
+            } while (MoveNext(ref start, count) && !_next.Equals(',') && !_next.Equals(']') && !_next.Equals('}'));
 
             count -= _builder.Length;
 
             return _builder.ToString();
+        }
+
+        private static bool MoveNext(ref int start, int count)
+        {
+            return Move(ref start, 1, count);
         }
 
         private static bool Move(ref int start, int step, int count)
@@ -47,11 +52,11 @@ namespace ITI.JsonParser.Correction
             StringBuilder _builder = new StringBuilder();
             char _current, _next;
 
-            while (Move(ref start, 1, count))
+            while (MoveNext(ref start, count))
             {
                 _current = value[start];
 
-                if (start + 1 == value.Length)
+                if (start == value.Length - 1)
                 {
                     if (!_current.Equals('"'))
                     {
@@ -76,7 +81,7 @@ namespace ITI.JsonParser.Correction
             {
                 count--;
             }
-            else if (Move(ref start, 1, count))
+            else if (MoveNext(ref start, count))
             {
                 count -= _builder.Length + 2;
             }
