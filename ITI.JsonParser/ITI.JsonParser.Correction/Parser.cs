@@ -16,23 +16,44 @@ namespace ITI.JsonParser.Correction
 
         static string findStringOfValue(string value, ref int start, ref int count)
         {
-            string _found = new string(value.Substring(start).TakeWhile<char>((c, index) => !c.Equals(',') && !c.Equals(']') && !c.Equals('}')).ToArray());
-            MoveStart(ref start, _found, ref count);
+            StringBuilder _builder = new StringBuilder();
+            char _next;
 
-            return _found;
+            do
+            {
+                _builder.Append(value[start]);
+                _next = start < count ? value[start + 1] : '\0';
+            } while (Move(1, ref start, count) && !_next.Equals(',') && !_next.Equals(']') && !_next.Equals('}'));
+
+            count -= _builder.Length;
+
+            return _builder.ToString();
         }
 
-        private static void MoveStart(ref int start, string found, ref int count)
+        private static bool Move(int length, ref int start, int count)
         {
-            start = (start + found.Length <= count) ? start + found.Length : throw new IndexOutOfRangeException();
+            if (start + length > count)
+            {
+                return false;
+            }
+
+            start += length;
+
+            return true;
         }
 
         static string findStringOfString(string value, ref int start, ref int count)
         {
-            string _found = _regex.Match(value.Substring(start)).ToString();
-            MoveStart(ref start, _found, ref count);
+            StringBuilder _builder = new StringBuilder();
+            
+            do
+            {
+                _builder.Append(value[start]);
+            } while (Move(1, ref start, count) && (_builder.Length < 2 || (value[start].Equals('"') && value[start - 1].Equals('\\') && !value[start - 2].Equals('\\'))));
 
-            return _found;
+            count -= _builder.Length;
+
+            return _builder.ToString();
         }
 
         public static bool ParseBoolean(string value, ref int start, ref int count)
