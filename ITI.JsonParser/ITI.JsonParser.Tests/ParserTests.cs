@@ -24,5 +24,32 @@ namespace ITI.JsonParser.Tests
             double _result = Parser.ParseDouble(value, ref start, ref count);
             Assert.AreEqual(12.99d, _result);
         }
+
+        [TestCase(@"""""")]
+        public void test_03(string value)
+        {
+            int start = 0;
+            int count = value.Length;
+            string _result = Parser.ParseString(value, ref start, ref count);
+            Assert.AreEqual("", _result);
+        }
+
+        [TestCase(@"""hello""")]
+        public void test_04(string value)
+        {
+            int start = 0;
+            int count = value.Length;
+            string _result = Parser.ParseString(value, ref start, ref count);
+            Assert.AreEqual("hello", _result);
+        }
+
+        [TestCase(@"""William Shakespeare: \""To be, or not to be\""""")]
+        public void test_05(string value)
+        {
+            int start = 0;
+            int count = value.Length;
+            string _result = Parser.ParseString(value, ref start, ref count);
+            Assert.AreEqual("William Shakespeare: \\\"To be, or not to be\\\"", _result);
+        }
     }
 }

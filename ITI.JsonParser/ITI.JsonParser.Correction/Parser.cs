@@ -30,14 +30,14 @@ namespace ITI.JsonParser.Correction
             return _builder.ToString();
         }
 
-        private static bool Move(int length, ref int start, int count)
+        private static bool Move(int step, ref int start, int count)
         {
-            if (start + length > count)
+            if (start + step >= count)
             {
                 return false;
             }
 
-            start += length;
+            start += step;
 
             return true;
         }
@@ -45,13 +45,24 @@ namespace ITI.JsonParser.Correction
         static string findStringOfString(string value, ref int start, ref int count)
         {
             StringBuilder _builder = new StringBuilder();
-            
-            do
-            {
-                _builder.Append(value[start]);
-            } while (Move(1, ref start, count) && (_builder.Length < 2 || (value[start].Equals('"') && value[start - 1].Equals('\\') && !value[start - 2].Equals('\\'))));
 
-            count -= _builder.Length;
+            if (count > 2)
+            {
+                for(;;)
+                {
+                    Move(1, ref start, count);
+                    _builder.Append(value[start]);
+
+                    if (start + 2 == count || (!value[start + 1].Equals('\\') && value[start + 2].Equals('"')))
+                    {
+                        _builder.Append(value[start + 1]);
+                        break;
+                    }
+                }
+
+                count -= _builder.Length + 2;
+                Move(2, ref start, count);
+            }
 
             return _builder.ToString();
         }
