@@ -22,17 +22,17 @@ namespace ITI.JsonParser.Correction
             do
             {
                 _builder.Append(value[start]);
-                _next = start < count ? value[start + 1] : '\0';
-            } while (Move(1, ref start, count) && !_next.Equals(',') && !_next.Equals(']') && !_next.Equals('}'));
+                _next = start + 1 < value.Length ? value[start + 1] : '\0';
+            } while (Move(ref start, 1, count) && !_next.Equals(',') && !_next.Equals(']') && !_next.Equals('}'));
 
             count -= _builder.Length;
 
             return _builder.ToString();
         }
 
-        private static bool Move(int step, ref int start, int count)
+        private static bool Move(ref int start, int step, int count)
         {
-            if (start + step >= count)
+            if (step > count)
             {
                 return false;
             }
@@ -45,23 +45,40 @@ namespace ITI.JsonParser.Correction
         static string findStringOfString(string value, ref int start, ref int count)
         {
             StringBuilder _builder = new StringBuilder();
+            char _current, _next;
 
-            if (count > 2)
+            while (Move(ref start, 1, count))
             {
-                for(;;)
-                {
-                    Move(1, ref start, count);
-                    _builder.Append(value[start]);
+                _current = value[start];
 
-                    if (start + 2 == count || (!value[start + 1].Equals('\\') && value[start + 2].Equals('"')))
+                if (start + 1 == value.Length)
+                {
+                    if (!_current.Equals('"'))
                     {
-                        _builder.Append(value[start + 1]);
+                        _builder.Append(_current);
+                    }
+
+                    break;
+                }
+                else
+                {
+                    _builder.Append(_current);
+                    _next = value[start + 1];
+
+                    if (_next.Equals('"') && !_current.Equals('\\'))
+                    {
                         break;
                     }
                 }
+            }
 
+            if (count == 1)
+            {
+                count--;
+            }
+            else if (Move(ref start, 1, count))
+            {
                 count -= _builder.Length + 2;
-                Move(2, ref start, count);
             }
 
             return _builder.ToString();
