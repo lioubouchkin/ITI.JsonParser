@@ -8,12 +8,20 @@ namespace ITI.JsonParser.Tests
 {
     [TestFixture]
     public class ParserTests {
+
         [TestCase( @"{}" )]
         public void test10_empty_json( String jsonValue ) {
-            Dictionary<String, Object> json = Parser.parse( jsonValue );
-            Assert.AreEqual( json.Count, 0 );
+            Dictionary<String, Object> result = Parser.parse( jsonValue, 0, jsonValue.Length );
+            Assert.AreEqual( result.Count, 0 );
         }
 
+        [TestCase( @"adf{}afd" )]
+        public void test11_empty_json( String jsonValue ) {
+            String json = "{}";
+            Dictionary<String, Object> result = Parser.parse( jsonValue, 3, json.Length );
+            Assert.AreEqual( result.Count, 0 );
+        }
+/*
         [TestCase( @"{""var"":""value""}" )]
         public void test20_one_key_value( String jsonValue ) {
             Dictionary<String, Object> json = Parser.parse( jsonValue );
@@ -166,5 +174,6 @@ namespace ITI.JsonParser.Tests
             Dictionary<String, Object> json = Parser.parse( jsonValue );
             Assert.AreEqual( json.Count, 7 );
         }
+  */
     }
 }
