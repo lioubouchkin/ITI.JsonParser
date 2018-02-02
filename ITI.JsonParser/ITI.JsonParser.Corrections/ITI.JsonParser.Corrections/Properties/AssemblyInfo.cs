@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // Les informations générales relatives à un assembly dépendent de
 // l'ensemble d'attributs suivant. Changez les valeurs de ces attributs pour modifier les informations
 // associées à un assembly.
-[assembly: AssemblyTitle("ITI.JsonParser.Correction")]
+[assembly: AssemblyTitle("ITI.JsonParser.Corrections")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ITI.JsonParser.Correction")]
+[assembly: AssemblyProduct("ITI.JsonParser.Corrections")]
 [assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // Le GUID suivant est pour l'ID de la typelib si ce projet est exposé à COM
-[assembly: Guid("84cfb47e-255b-4107-99ee-c17a45b88c4e")]
+[assembly: Guid("2ef84186-0800-4717-9a85-f504f28f280e")]
 
 // Les informations de version pour un assembly se composent des quatre valeurs suivantes :
 //

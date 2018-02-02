@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2026
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITI.JsonParser.Correction", "ITI.JsonParser.Corrections\ITI.JsonParser.Correction.csproj", "{2EF84186-0800-4717-9A85-F504F28F280E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITI.JsonParser.Tests", "..\ITI.JsonParser.Tests\ITI.JsonParser.Tests.csproj", "{8A7603DC-6E94-46FA-9E80-A4EE949AF822}"
+	ProjectSection(ProjectDependencies) = postProject
+		{2EF84186-0800-4717-9A85-F504F28F280E} = {2EF84186-0800-4717-9A85-F504F28F280E}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2EF84186-0800-4717-9A85-F504F28F280E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EF84186-0800-4717-9A85-F504F28F280E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2EF84186-0800-4717-9A85-F504F28F280E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2EF84186-0800-4717-9A85-F504F28F280E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A7603DC-6E94-46FA-9E80-A4EE949AF822}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A7603DC-6E94-46FA-9E80-A4EE949AF822}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A7603DC-6E94-46FA-9E80-A4EE949AF822}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A7603DC-6E94-46FA-9E80-A4EE949AF822}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {736FA2E1-F837-4158-923F-19D1F25732EE}
+	EndGlobalSection
+EndGlobal

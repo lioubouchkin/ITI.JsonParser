@@ -1,9 +1,8 @@
-﻿using ITI.JsonParser.Correction;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-
+using ITI.JsonParser;
 namespace ITI.JsonParser.Tests
 {
     [TestFixture]

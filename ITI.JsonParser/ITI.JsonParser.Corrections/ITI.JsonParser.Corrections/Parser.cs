@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace ITI.JsonParser.Correction
+namespace ITI.JsonParser
 {
 
     public static class Parser
@@ -107,7 +107,7 @@ namespace ITI.JsonParser.Correction
                 throw new FormatException();
             }
 
-            return null; 
+            return null;
         }
 
         public static bool ParseBoolean(string value, ref int start, ref int count)
@@ -124,7 +124,7 @@ namespace ITI.JsonParser.Correction
         {
             return Decoder(FindStringOfString(value, ref start, ref count));
         }
-        
+
         static string Decoder(string value)
         {
             return _regex.Replace(
@@ -138,7 +138,7 @@ namespace ITI.JsonParser.Correction
             List<object> _results = new List<object>();
             char _current_char;
 
-            for (;;)
+            for (; ; )
             {
                 _current_char = SkipSpaces(value, ref start, ref count);
                 _results.Add(ParseValue(_current_char, value, ref start, ref count));
@@ -173,7 +173,7 @@ namespace ITI.JsonParser.Correction
             char _current_char;
             string _key;
 
-            for(;;)
+            for (; ; )
             {
                 _current_char = SkipSpaces(value, ref start, ref count);
 

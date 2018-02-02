@@ -5,8 +5,6 @@ VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITI.JsonParser", "ITI.JsonParser\ITI.JsonParser.csproj", "{C880DDB8-8873-4928-A166-2C1734FE867D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITI.JsonParser.Correction", "ITI.JsonParser.Correction\ITI.JsonParser.Correction.csproj", "{84CFB47E-255B-4107-99EE-C17A45B88C4E}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ITI.JsonParser.Tests", "ITI.JsonParser.Tests\ITI.JsonParser.Tests.csproj", "{8A7603DC-6E94-46FA-9E80-A4EE949AF822}"
 EndProject
 Global
