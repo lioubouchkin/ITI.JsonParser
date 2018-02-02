@@ -12,7 +12,7 @@ namespace ITI.JsonParser.Correction
     public static class Parser
     {
         static CultureInfo _culture = CultureInfo.CreateSpecificCulture("en-US");
-        static Regex _regex = new Regex("(?<!\\\\)\"");
+        static Regex _regex = new Regex(@"\\u(?<Value>[a-zA-Z0-9]{4})", RegexOptions.Compiled);
 
         static string FindStringOfValue(string value, ref int start, ref int count)
         {
@@ -122,12 +122,39 @@ namespace ITI.JsonParser.Correction
 
         public static string ParseString(string value, ref int start, ref int count)
         {
-            return FindStringOfString(value, ref start, ref count);
+            return Decoder(FindStringOfString(value, ref start, ref count));
+        }
+        
+        static string Decoder(string value)
+        {
+            return _regex.Replace(
+                value,
+                m => ((char)int.Parse(m.Groups["Value"].Value, NumberStyles.HexNumber)).ToString()
+            );
         }
 
         public static object[] ParseArray(string value, ref int start, ref int count)
         {
-            throw new NotImplementedException();
+            List<object> _results = new List<object>();
+            char _current_char;
+
+            for (;;)
+            {
+                _current_char = SkipSpaces(value, ref start, ref count);
+                _results.Add(ParseValue(_current_char, value, ref start, ref count));
+                _current_char = SkipSpaces(value, ref start, ref count);
+
+                if (']'.Equals(_current_char))
+                {
+                    break;
+                }
+                else if (!','.Equals(_current_char))
+                {
+                    throw new FormatException();
+                }
+            }
+
+            return _results.ToArray();
         }
 
         public static Dictionary<string, object> ParseObject(string value, ref int start, ref int count)
@@ -136,25 +163,25 @@ namespace ITI.JsonParser.Correction
             {
                 SkipSpaces(value, ref start, ref count);
             }
+
             if (!'{'.Equals(value[start]))
             {
                 throw new FormatException();
             }
 
             Dictionary<string, object> _results = new Dictionary<string, object>();
-            bool _continue = true;
             char _current_char;
             string _key;
-            object _value;
 
-            do
+            for(;;)
             {
                 _current_char = SkipSpaces(value, ref start, ref count);
 
                 if ('}'.Equals(_current_char))
                 {
                     break;
-                } else if (!'"'.Equals(_current_char))
+                }
+                else if (!'"'.Equals(_current_char))
                 {
                     throw new FormatException();
                 }
@@ -172,18 +199,18 @@ namespace ITI.JsonParser.Correction
                 }
 
                 _current_char = SkipSpaces(value, ref start, ref count);
-                _value = ParseValue(_current_char, value, ref start, ref count);
-                _results.Add(_key, _value);
+                _results.Add(_key, ParseValue(_current_char, value, ref start, ref count));
                 _current_char = SkipSpaces(value, ref start, ref count);
 
                 if ('}'.Equals(_current_char))
                 {
-                    _continue = false;
-                } else if (!','.Equals(_current_char))
+                    break;
+                }
+                else if (!','.Equals(_current_char))
                 {
                     throw new FormatException();
                 }
-            } while (_continue);
+            }
 
             return _results;
         }

@@ -90,7 +90,7 @@ namespace ITI.JsonParser.Tests
            });
         }
 
-        [TestCase(@"{""active"":true,""age"":20,""salutation"":""hello"",""sentence"":""William Shakespeare : \""To be, or not to be\""""}")]
+        [TestCase(@"{""active"":true,""age"":20,""salutation"":""hello"",""sentence"":""William Shakespeare : \""To be\u002C or not to be\""""}")]
         public void test_10(string value)
         {
             int start = 0;
@@ -106,6 +106,15 @@ namespace ITI.JsonParser.Tests
             int count = value.Length - 1;
             Dictionary<string, object> _result = Parser.ParseObject(value, ref start, ref count);
             Assert.AreEqual(5, _result.Count);
+        }
+
+        [TestCase(@"{""active"" : true       ,""age"" : 20    ,""salutation"" : ""hello"",""sentence"" : ""William Shakespeare : \""To be, or not to be\"""", ""self"": {""active"":true,""age"":20,""salutation"":""hello"",""sentence"":""William Shakespeare : \""To be, or not to be\""""}, ""weekend"" : [{""active"" : true       ,""age"" : 20    ,""salutation"" : ""hello"",""sentence"" : ""William Shakespeare : \""To be, or not to be\"""", ""self"": {""active"":true,""age"":20,""salutation"":""hello"",""sentence"":""William Shakespeare : \""To be, or not to be\""""}},{""active"" : true       ,""age"" : 20    ,""salutation"" : ""hello"",""sentence"" : ""William Shakespeare : \""To be, or not to be\"""", ""self"": {""active"":true,""age"":20,""salutation"":""hello"",""sentence"":""William Shakespeare : \""To be, or not to be\""""}}]}")]
+        public void test_12(string value)
+        {
+            int start = 0;
+            int count = value.Length - 1;
+            Dictionary<string, object> _result = Parser.ParseObject(value, ref start, ref count);
+            Assert.AreEqual(6, _result.Count);
         }
     }
 }
