@@ -90,12 +90,14 @@ namespace ITI.JsonParser.Correction
             return _builder.ToString();
         }
 
-        static void SkipSpaces(string value, ref int start, ref int count)
+        static char SkipSpaces(string value, ref int start, ref int count)
         {
-            while (MoveNext(ref start, ref count) && value[start].ToString().Trim().Length == 0)
+            while (MoveNext(ref start, ref count) && start < value.Length && value[start].ToString().Trim().Length == 0)
             {
                 //Do nothing
-            }
+            };
+
+            return value[start];
         }
 
         public static object ParseNull(string value, ref int start, ref int count)
@@ -128,9 +130,94 @@ namespace ITI.JsonParser.Correction
             throw new NotImplementedException();
         }
 
-        public static Dictionary<String, Object> ParseObject(string value, ref int start, ref int count)
+        public static Dictionary<string, object> ParseObject(string value, ref int start, ref int count)
         {
-            throw new NotImplementedException();
+            if (value[start].ToString().Trim().Length == 0)
+            {
+                SkipSpaces(value, ref start, ref count);
+            }
+            if (!'{'.Equals(value[start]))
+            {
+                throw new FormatException();
+            }
+
+            Dictionary<string, object> _results = new Dictionary<string, object>();
+            bool _continue = true;
+            char _current_char;
+            string _key;
+            object _value;
+
+            do
+            {
+                _current_char = SkipSpaces(value, ref start, ref count);
+
+                if ('}'.Equals(_current_char))
+                {
+                    break;
+                } else if (!'"'.Equals(_current_char))
+                {
+                    throw new FormatException();
+                }
+
+                _key = FindStringOfString(value, ref start, ref count);
+
+                if (_results.ContainsKey(_key))
+                {
+                    throw new InvalidOperationException();
+                }
+
+                if (!':'.Equals(SkipSpaces(value, ref start, ref count)))
+                {
+                    throw new FormatException();
+                }
+
+                _current_char = SkipSpaces(value, ref start, ref count);
+                _value = ParseValue(_current_char, value, ref start, ref count);
+                _results.Add(_key, _value);
+                _current_char = SkipSpaces(value, ref start, ref count);
+
+                if ('}'.Equals(_current_char))
+                {
+                    _continue = false;
+                } else if (!','.Equals(_current_char))
+                {
+                    throw new FormatException();
+                }
+            } while (_continue);
+
+            return _results;
+        }
+
+        static object ParseValue(char ch, string value, ref int start, ref int count)
+        {
+            if ('"'.Equals(ch))
+            {
+                return ParseString(value, ref start, ref count);
+            }
+            else if ('n'.Equals(ch))
+            {
+                return ParseNull(value, ref start, ref count);
+            }
+            else if ('t'.Equals(ch) || 'f'.Equals(ch))
+            {
+                return ParseBoolean(value, ref start, ref count);
+            }
+            else if ('-'.Equals(ch) || Int32.TryParse(ch.ToString(), out int _result))
+            {
+                return ParseDouble(value, ref start, ref count);
+            }
+            else if ('['.Equals(ch))
+            {
+                return ParseArray(value, ref start, ref count);
+            }
+            else if ('{'.Equals(ch))
+            {
+                return ParseObject(value, ref start, ref count);
+            }
+            else
+            {
+                throw new FormatException();
+            }
         }
     }
 }
