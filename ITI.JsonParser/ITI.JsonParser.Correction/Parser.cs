@@ -14,7 +14,7 @@ namespace ITI.JsonParser.Correction
         static CultureInfo _culture = CultureInfo.CreateSpecificCulture("en-US");
         static Regex _regex = new Regex("(?<!\\\\)\"");
 
-        static string findStringOfValue(string value, ref int start, ref int count)
+        static string FindStringOfValue(string value, ref int start, ref int count)
         {
             StringBuilder _builder = new StringBuilder();
             char _next;
@@ -23,19 +23,27 @@ namespace ITI.JsonParser.Correction
             {
                 _builder.Append(value[start]);
                 _next = start < value.Length - 1 ? value[start + 1] : '\0';
-            } while (MoveNext(ref start, count) && !_next.Equals(',') && !_next.Equals(']') && !_next.Equals('}'));
+            } while (MoveNext(ref start, ref count) && !_next.Equals(',') && !_next.Equals(']') && !_next.Equals('}'));
 
-            count -= _builder.Length;
+            if (_next.Equals(',') || _next.Equals(']') || _next.Equals('}'))
+            {
+                MoveBack(ref start, ref count);
+            }
 
             return _builder.ToString();
         }
 
-        private static bool MoveNext(ref int start, int count)
+        private static bool MoveBack(ref int start, ref int count)
         {
-            return Move(ref start, 1, count);
+            return Move(ref start, -1, ref count);
         }
 
-        private static bool Move(ref int start, int step, int count)
+        private static bool MoveNext(ref int start, ref int count)
+        {
+            return Move(ref start, 1, ref count);
+        }
+
+        private static bool Move(ref int start, int step, ref int count)
         {
             if (step > count)
             {
@@ -43,16 +51,17 @@ namespace ITI.JsonParser.Correction
             }
 
             start += step;
+            count -= step;
 
             return true;
         }
 
-        static string findStringOfString(string value, ref int start, ref int count)
+        static string FindStringOfString(string value, ref int start, ref int count)
         {
             StringBuilder _builder = new StringBuilder();
             char _current, _next;
 
-            while (MoveNext(ref start, count))
+            while (MoveNext(ref start, ref count))
             {
                 _current = value[start];
 
@@ -60,7 +69,7 @@ namespace ITI.JsonParser.Correction
                 {
                     if (!_current.Equals('"'))
                     {
-                        _builder.Append(_current);
+                        throw new FormatException();
                     }
 
                     break;
@@ -72,40 +81,46 @@ namespace ITI.JsonParser.Correction
 
                     if (_next.Equals('"') && !_current.Equals('\\'))
                     {
+                        MoveNext(ref start, ref count);
                         break;
                     }
                 }
             }
 
-            if (count == 1)
+            return _builder.ToString();
+        }
+
+        static void SkipSpaces(string value, ref int start, ref int count)
+        {
+            while (MoveNext(ref start, ref count) && value[start].ToString().Trim().Length == 0)
             {
-                count--;
+                //Do nothing
             }
-            else if (MoveNext(ref start, count))
+        }
+
+        public static object ParseNull(string value, ref int start, ref int count)
+        {
+            if (!"null".Equals(FindStringOfValue(value, ref start, ref count)))
             {
-                count -= _builder.Length + 2;
+                throw new FormatException();
             }
 
-            return _builder.ToString();
+            return null; 
         }
 
         public static bool ParseBoolean(string value, ref int start, ref int count)
         {
-            Boolean.TryParse(findStringOfValue(value, ref start, ref count), out bool _result);
-
-            return _result;
+            return Boolean.Parse(FindStringOfValue(value, ref start, ref count));
         }
 
         public static double ParseDouble(string value, ref int start, ref int count)
         {
-            Double.TryParse(findStringOfValue(value, ref start, ref count), NumberStyles.Number, _culture, out double _result);
-
-            return _result;
+            return Double.Parse(FindStringOfValue(value, ref start, ref count), NumberStyles.Number, _culture);
         }
 
         public static string ParseString(string value, ref int start, ref int count)
         {
-            return findStringOfString(value, ref start, ref count);
+            return FindStringOfString(value, ref start, ref count);
         }
 
         public static object[] ParseArray(string value, ref int start, ref int count)
