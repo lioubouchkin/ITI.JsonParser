@@ -49,13 +49,16 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Connected Services\" />
+  <ItemGroup Condition=" '$(SolutionName)' == 'ITI.JsonParser' ">
+    <ProjectReference Include="..\ITI.JsonParser\ITI.JsonParser.csproj">
+      <Project>{c880ddb8-8873-4928-a166-2c1734fe867d}</Project>
+      <Name>ITI.JsonParser</Name>
+    </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ITI.JsonParser.Corrections\ITI.JsonParser.Corrections\ITI.JsonParser.Correction.csproj">
+  <ItemGroup Condition=" '$(SolutionName)' == 'ITI.JsonParser.Corrections' ">
+    <ProjectReference Include="..\ITI.JsonParser.Corrections\ITI.JsonParser.Corrections\ITI.JsonParser.Corrections.csproj">
       <Project>{2ef84186-0800-4717-9a85-f504f28f280e}</Project>
-      <Name>ITI.JsonParser.Correction</Name>
+      <Name>ITI.JsonParser.Corrections</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

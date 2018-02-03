@@ -44,7 +44,4 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>xcopy $(TargetPath) $(SolutionDir)\..\ITI.JsonParser\$(OutDir) /e /y</PostBuildEvent>
-  </PropertyGroup>
 </Project>
