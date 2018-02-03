@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2EF84186-0800-4717-9A85-F504F28F280E}</ProjectGuid>
+    <ProjectGuid>{BC4801FB-8A34-4422-8CCF-852F032C8FE3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ITI.JsonParser.Corrections</RootNamespace>

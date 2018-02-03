@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8A7603DC-6E94-46FA-9E80-A4EE949AF822}</ProjectGuid>
+    <ProjectGuid>{3E949CEF-762A-4E37-94E5-A68F0D9EBD90}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ITI.JsonParser.Tests</RootNamespace>
@@ -49,15 +49,9 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(SolutionName)' == 'ITI.JsonParser' ">
-    <ProjectReference Include="..\ITI.JsonParser\ITI.JsonParser.csproj">
-      <Project>{c880ddb8-8873-4928-a166-2c1734fe867d}</Project>
-      <Name>ITI.JsonParser</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup Condition=" '$(SolutionName)' == 'ITI.JsonParser.Corrections' ">
+  <ItemGroup>
     <ProjectReference Include="..\ITI.JsonParser.Corrections\ITI.JsonParser.Corrections\ITI.JsonParser.Corrections.csproj">
-      <Project>{2ef84186-0800-4717-9a85-f504f28f280e}</Project>
+      <Project>{bc4801fb-8a34-4422-8ccf-852f032c8fe3}</Project>
       <Name>ITI.JsonParser.Corrections</Name>
     </ProjectReference>
   </ItemGroup>
