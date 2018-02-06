@@ -55,15 +55,16 @@ namespace ITI.JsonParser.Correction {
                 _current = value[start];
 
                 if( start == value.Length - 1 ) {
-                    if( !_current.Equals( '"' ) ) {
+                    if( !( _current.Equals( '"' ) && !( '\\' ).Equals( start - 1 ) ) ) {   // last character either escaped double quotes or any other char (except double quotes)
                         throw new FormatException();
                     }
-
+                    break;      // last character is not escaped double quotes
+                } else if( ( '\\' ).Equals( _current ) && ( '"' ).Equals( value[start + 1] ) ) { // cursor is on an escaping character for double quotes
+                } else if( ( '"' ).Equals( _current ) && !('\\').Equals( value[start - 1] ) ) {
                     break;
                 } else {
                     _builder.Append( _current );
                     _next = value[start + 1];
-
                     if( _next.Equals( '"' ) && !_current.Equals( '\\' ) ) {
                         MoveNext( ref start, ref count );
                         break;
