@@ -84,7 +84,7 @@ namespace ITI.JsonParser.Correction {
         }
 
         public static object ParseNull( string value, ref int start, ref int count ) {
-            if( !"null".Equals( FindStringOfValue( value, ref start, ref count ) ) ) {
+            if( !"null".Equals( FindStringOfValue( value, ref start, ref count ).Trim() ) ) {
                 throw new FormatException();
             }
 
@@ -92,7 +92,7 @@ namespace ITI.JsonParser.Correction {
         }
 
         public static bool ParseBoolean( string value, ref int start, ref int count ) {
-            return Boolean.Parse( FindStringOfValue( value, ref start, ref count ) );
+            return Boolean.Parse( FindStringOfValue( value, ref start, ref count ).Trim() );
         }
 
         public static double ParseDouble( string value, ref int start, ref int count ) {
@@ -117,8 +117,12 @@ namespace ITI.JsonParser.Correction {
             for(; ; )
             {
                 _current_char = SkipSpaces( value, ref start, ref count );
-                _results.Add( ParseValue( _current_char, value, ref start, ref count ) );
-                _current_char = SkipSpaces( value, ref start, ref count );
+                if( ']'.Equals( _current_char ) ) {
+                    break;
+                } else {
+                    _results.Add( ParseValue( _current_char, value, ref start, ref count ) );
+                    _current_char = SkipSpaces( value, ref start, ref count );
+                }
 
                 if( ']'.Equals( _current_char ) ) {
                     break;
